@@ -19,3 +19,8 @@ Thumbs.db
 
 # jupyter
 .ipynb_checkpoints/
+
+# market_data - dados e logs
+Projetos/market_data/data/
+Projetos/market_data/logs/
+
