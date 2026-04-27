@@ -24,3 +24,6 @@ Thumbs.db
 Projetos/market_data/data/
 Projetos/market_data/logs/
 
+# Arquivo de teste local
+**/testar_*.py
+
