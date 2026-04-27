@@ -1,0 +1,20 @@
+# Dependências do projeto market_data
+# Ambiente: gestao_portfolio (Anaconda)
+
+# Manipulação de dados
+pandas>=2.0.0
+numpy>=1.24.0
+pyarrow>=14.0.0
+
+# Leitura de arquivos
+openpyxl>=3.1.0
+
+# APIs financeiras
+python-bcb>=0.3.0
+yfinance>=0.2.0
+
+# Web scraping (vamos adicionar depois)
+# playwright>=1.40.0
+
+# Visualização
+matplotlib>=3.7.0
