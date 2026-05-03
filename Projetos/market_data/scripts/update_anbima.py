@@ -12,34 +12,28 @@ Uso:
     python -m scipts.update_anbima
 """
 
+import  pandas as pd
 from pathlib import Path
 from core.config import ANBIMA_DOWNLOADS_DIR, ANBIMA_BASE_FILE # Importamos os caminhos definidos em config.py
 from core.storage import carregar_base, consolidar, salvar_base # Importamos as funções do módulo storage que iremos utilizar
 from sources.anbima import processar_xls # Importamos a função anbima.py para fazer o processamento 
 
-def _encontrar_xls_mais_recente(pasta:Path) -> Path: # Essa função recebe um path e retorna um path
+def _listar_xls(pasta: Path) -> list[Path]:
     """
-    Encontra o arquivo XLS mais recentemente modificado na pasta.
+    Lista todos os arquivos XLS da pasta downloads.
 
-    Útil quando a pasta downloads/ acumula vários downloads ao longo do tempo. 
+    Retorna a lista ordenada alfabeticamente para a reprodutibilidade
     """
 
-    xls_files = list(pasta.glob("*.xlsx")) # criamos uma lista com os arquivos dentro da pasta. .glob() faz com que a busca seja por padrão de arquivo
+    xls_files = sorted(pasta.glob("*.xlsx"))
 
     if not xls_files:
         raise FileNotFoundError(
-            f"Nenhum arquivo .xlsx encontrado em {pasta}.\n"
-            f"Baixe um XLS do ANBIMA data e coloque na pasta :)\n"
+            f"Nenhum arquivo .xlsx foi encontrado em {pasta}.\n"
+            f"Baixa os arquivos XLSX do ANBIMA DATA e coloque dentro das pasta {pasta.name}.\n"
         )
-    
-    # Ordena por data de modificação (mais recente primeiro)
-    mais_recente = max(xls_files, key=lambda f: f.stat().st_mtime) # código que pega o arquivo com a data mais recente (data máxima) 
-    # max() -> função que retorna o maior item, mas ao passarmos key=funcao ele aplica a funcao para todos os itens e os compara
-    # lambda -> funcao anonima, é util quando quremos fazer uma função pequena em um único lugar
-    # a letra f representa a variavel xls_files, que é do tipo path. Portanto, quando chamamos f.stat() estamos chamando path.stat()
-    # path.stat() retorna informações do arquivo, já path.stat().st_mtime retorna a data da última modificação 
 
-    return mais_recente
+    return xls_files
 
 def main() -> None:
     """
@@ -48,17 +42,28 @@ def main() -> None:
 
     print("="*60+"\n🚀 ATUALIZAÇÃO DA BASE ANBIMA\n"+"="*60)
 
-    # 1. Encontra o XLS mais recente
+    # 1. Lista TODOS os XLS da pasta
     print("\n[1/4] Localizando XLS...")
-    caminho_xls = _encontrar_xls_mais_recente(ANBIMA_DOWNLOADS_DIR)
-    
+    arquivos_xlsx = _listar_xls(ANBIMA_DOWNLOADS_DIR)
+    print(f"   {len(arquivos_xlsx)} arquivo(s) encontrado(s):")
+    for arq in arquivos_xlsx:
+        print(f"   -{arq.name}")
+
     # 2. Carrega base existente
     print("\n[2/4] Carregando base atual...")
     base_atual = carregar_base(ANBIMA_BASE_FILE)
 
-    # 3. Processa o XLS
-    print("\n[3/4] Processando o XLS...")
-    dados_novos = processar_xls(caminho_xls)
+    # 3. Processa TODOS os XLS e junta
+    print("\n[3/4] Processando os XLS...")
+    dataframes_novos = []
+    for arq in arquivos_xlsx:
+        print(f"  - {arq.name} -")
+        df = processar_xls(arq)
+        dataframes_novos.append(df)
+
+    # Concatena tudo num único DataFrame
+    dados_novos = pd.concat(dataframes_novos, ignore_index=True)
+    print(f"\n    Total combinado: {len(dados_novos)} linhas.")
 
     # 4. Consolida e salva
     print("\n [4/4] Consolidando e salvando...")
