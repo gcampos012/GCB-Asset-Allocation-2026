@@ -27,3 +27,8 @@ Projetos/market_data/logs/
 # Arquivo de teste local
 **/testar_*.py
 
+# Simulador de carteiras
+Projetos/simulador_carteiras/data/
+Projetos/simulador_carteiras/outputs/
+Projetos/simulador_carteiras/.venv/
+
