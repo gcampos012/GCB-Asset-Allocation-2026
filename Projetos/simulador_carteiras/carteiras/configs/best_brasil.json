@@ -1,0 +1,13 @@
+{
+  "nome": "Carteira Brasil com o filé mignon dos ativos (on my opinion)",
+  "descricao": "Carteira com as melhores classes de ativo no Brasil",
+  "benchmark": "CDI",
+  "data_inicio_default": "2003-01-01",
+  "ativos": [
+    "SELIC",
+    "IMA-B 5 P2",
+    "DIVO11.SA",
+    "IVVB11.SA",
+    "SMAL11.SA"
+  ]
+}
